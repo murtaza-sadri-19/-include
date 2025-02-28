@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Word Generator</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 50px 20px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+
+        h1 {
+            color: #2c3e50;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        #wordDisplay {
+            font-size: 26px;
+            margin: 20px;
+            padding: 15px 25px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 8px;
+            min-width: 250px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        #wordDisplay:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        button {
+            padding: 12px 30px;
+            font-size: 18px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        button:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(1px);
+        }
+
+        @media (max-width: 480px) {
+            #wordDisplay {
+                font-size: 20px;
+                min-width: 200px;
+            }
+            button {
+                padding: 10px 25px;
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+<h1>Random Word Generator</h1>
+<div id="wordDisplay">Welcome to Level 1</div>
+<button onclick="generateWord()">Generate</button>
+
+<script>
+    const words = [
+        "Computer", "Laptop", "Library", "Internet", "WiFi", "Assignment", "Email",
+        "Google Search", "Lecture Hall", "PowerPoint", "Microsoft Word", "Examination",
+        "Google Docs", "Google Sheets", "Timetable", "Mobile App", "Browser",
+        "Cultural Fest", "Coding", "Programming", "Syllabus", "USB Drive",
+        "Cloud Storage", "Scholarship", "Password", "Online Class", "Student ID",
+        "Headphones", "Virtual Meeting", "Hostel Room", "Keyboard", "Smartphone",
+        "Convocation", "Text Message", "AI Chatbot", "Group Discussion", "Calculator",
+        "Cybersecurity", "Notice Board", "Data Science", "Machine Learning",
+        "Sports Day", "Software", "Web Development", "Workshop", "Visual Studio Code",
+        "Operating System", "Internship", "Hacking", "Digital Signature", "Faculty",
+        "Encryption", "Blockchain", "College Canteen", "Debugging", "Computer Network",
+        "Presentation", "Robotics", "Virtual Reality", "Registration"
+    ];
+
+    function generateWord() {
+        const randomIndex = Math.floor(Math.random() * words.length);
+        const randomWord = words[randomIndex];
+        document.getElementById("wordDisplay").textContent = randomWord;
+    }
+</script>
+</body>
+</html>
