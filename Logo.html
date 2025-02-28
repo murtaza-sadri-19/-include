@@ -175,7 +175,7 @@
 <body>
 <div class="game-container">
     <h1>Guess the Brand</h1>
-    <img id="logo" src="" alt="Brand Logo">
+    <img id="logo" src="images/#include.jpg" alt="">
     <div id="hint"></div>
     <input type="text" id="user-input" placeholder="Type your answer here">
     <button id="submit-btn">Submit</button>
@@ -256,6 +256,9 @@
     let score = 0;
     let timeLeft = 15;
     let timerId;
+    let usedLogos = [];
+
+
 
     const logoElement = document.getElementById('logo');
     const hintElement = document.getElementById('hint');
@@ -268,9 +271,9 @@
     const restartBtn = document.getElementById('restart-btn');
 
     function startGame() {
-        const easy = shuffleArray(questionDataBase.filter(q => q.difficulty === "easy")).slice(0, 4);
-        const medium = shuffleArray(questionDataBase.filter(q => q.difficulty === "medium")).slice(0, 3);
-        const hard = shuffleArray(questionDataBase.filter(q => q.difficulty === "hard")).slice(0, 3);
+        const easy = shuffleArray(questionDataBase.filter(q => q.difficulty === "easy" && !usedLogos.includes(q.title))).slice(0, 4);
+        const medium = shuffleArray(questionDataBase.filter(q => q.difficulty === "medium" && !usedLogos.includes(q.title))).slice(0, 3);
+        const hard = shuffleArray(questionDataBase.filter(q => q.difficulty === "hard" && !usedLogos.includes(q.title))).slice(0, 3);
         currentQuestions = shuffleArray([...easy, ...medium, ...hard]);
         currentIndex = 0;
         score = 0;
@@ -362,6 +365,9 @@
         feedbackElement.textContent = `You got ${score} out of ${currentQuestions.length} correct!`;
         feedbackElement.style.color = "black";
         feedbackElement.classList.add('show');
+
+        // Add used logos to the global array
+        currentQuestions.forEach(q => usedLogos.push(q.title));
     }
 
     submitBtn.addEventListener('click', () => {
