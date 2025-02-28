@@ -1,391 +1,391 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Guess the Brand Game</title>
-    <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background: linear-gradient(135deg, #1e3c72, #2a5298);
-            margin: 0;
-            overflow: hidden;
-        }
-        .game-container {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            text-align: center;
-            width: 500px;
-            position: relative;
-            overflow: hidden;
-            animation: fadeIn 1s ease-in-out;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        h1 {
-            font-size: 32px;
-            color: #2a5298;
-            margin-bottom: 20px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-        #logo {
-            width: 120px;
-            height: 120px;
-            margin-bottom: 20px;
-            object-fit: contain;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s;
-        }
-        #logo:hover {
-            transform: scale(1.1);
-        }
-        #hint {
-            font-size: 20px;
-            color: #333;
-            margin-bottom: 25px;
-            font-style: italic;
-            background: #f0f4ff;
-            padding: 10px;
-            border-radius: 8px;
-        }
-        #user-input {
-            padding: 12px;
-            font-size: 18px;
-            width: 85%;
-            margin-bottom: 15px;
-            border: 2px solid #2a5298;
-            border-radius: 25px;
-            outline: none;
-            transition: border-color 0.3s, box-shadow 0.3s;
-        }
-        #user-input:focus {
-            border-color: #1e3c72;
-            box-shadow: 0 0 10px rgba(30, 60, 114, 0.5);
-        }
-        #submit-btn {
-            padding: 12px 30px;
-            font-size: 18px;
-            background: linear-gradient(45deg, #ff6b6b, #ff8e53);
-            color: white;
-            border: none;
-            border-radius: 25px;
-            cursor: pointer;
-            transition: transform 0.3s, box-shadow 0.3s;
-            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
-        }
-        #submit-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(255, 107, 107, 0.6);
-        }
-        #feedback {
-            margin-top: 20px;
-            font-size: 18px;
-            font-weight: bold;
-            opacity: 0;
-            transition: opacity 0.5s, transform 0.5s;
-        }
-        #feedback.show {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        #feedback.correct {
-            color: #28a745;
-            transform: translateY(-10px);
-        }
-        #feedback.wrong {
-            color: #dc3545;
-            transform: translateY(-10px);
-        }
-        #score {
-            margin-top: 15px;
-            font-size: 18px;
-            color: #2a5298;
-            font-weight: 600;
-        }
-        #timer {
-            margin-top: 15px;
-            font-size: 16px;
-            color: #fff;
-            background: rgba(0, 0, 0, 0.7);
-            padding: 5px 10px;
-            border-radius: 15px;
-        }
-        #timer-bar {
-            width: 100%;
-            height: 12px;
-            background: #ddd;
-            border-radius: 6px;
-            overflow: hidden;
-            margin-top: 10px;
-            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-        #timer-progress {
-            height: 100%;
-            background: linear-gradient(45deg, #28a745, #85e085);
-            width: 100%;
-            transition: width linear;
-            border-radius: 6px;
-        }
-        #restart-btn {
-            display: none;
-            margin-top: 25px;
-            padding: 12px 30px;
-            background: linear-gradient(45deg, #00c6ff, #0072ff);
-            color: white;
-            border: none;
-            border-radius: 25px;
-            cursor: pointer;
-            font-size: 18px;
-            transition: transform 0.3s, box-shadow 0.3s;
-            box-shadow: 0 5px 15px rgba(0, 198, 255, 0.4);
-        }
-        #restart-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(0, 198, 255, 0.6);
-        }
-        /* Background Animation */
-        body::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.1), transparent);
-            animation: pulse 10s infinite;
-            z-index: -1;
-        }
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.2); }
-            100% { transform: scale(1); }
-        }
-    </style>
-</head>
-<body>
-<div class="game-container">
-    <h1>Guess the Brand</h1>
-    <img id="logo" src="images/#include.jpg" alt="">
-    <div id="hint"></div>
-    <input type="text" id="user-input" placeholder="Type your answer here">
-    <button id="submit-btn">Submit</button>
-    <div id="feedback"></div>
-    <div id="score">Score: 0/10 | Question: 1/10</div>
-    <div id="timer">Time Left: 15s</div>
-    <div id="timer-bar"><div id="timer-progress"></div></div>
-    <button id="restart-btn">Restart Game</button>
-</div>
-
-<script>
-    const questionDataBase = [
-        { title: "boat", hint_qustion: "I am an Indian consumer electronics brand", difficulty: "easy", image: "images/boat.jpeg" },
-        { title: "bandhan bank", hint_qustion: "I am an Indian bank", difficulty: "easy", image: "images/bandhanbank.jpeg" },
-        { title: "adobe", hint_qustion: "I create software for design and creativity", difficulty: "easy", image: "images/adobe.jpeg" },
-        { title: "counter strike", hint_qustion: "I am a popular video game", difficulty: "easy", image: "images/counterstrike.jpeg" },
-        { title: "canon", hint_qustion: "I am a Japanese company known for cameras and printers", difficulty: "easy", image: "images/canon.jpeg" },
-        { title: "chevrolet", hint_qustion: "I am an American car brand", difficulty: "easy", image: "images/chevrolet.jpeg" },
-        { title: "bank of india", hint_qustion: "I am an Indian public sector bank", difficulty: "easy", image: "images/bankofindia.jpeg" },
-        { title: "central bank of india", hint_qustion: "I am another major Indian public sector bank", difficulty: "easy", image: "images/centralbankofindia.jpeg" },
-        { title: "axis bank", hint_qustion: "I am an Indian private bank", difficulty: "easy", image: "images/axis_bank.jpeg" },
-        { title: "chanel", hint_qustion: "I am a luxury fashion brand with brand ambassador as bts V", difficulty: "easy", image: "images/chanel.jpeg" },
-        { title: "deloitte", hint_qustion: "I am a global professional services firm", difficulty: "easy", image: "images/deloitte.jpeg" },
-        { title: "denabank", hint_qustion: "I am an Indian bank that rhymes with lena", difficulty: "easy", image: "images/denabank.jpeg" },
-        { title: "dropbox", hint_qustion: "I am a cloud storage service", difficulty: "easy", image: "images/dropbox.jpeg" },
-        { title: "firefox", hint_qustion: "I am a free and open-source web browser", difficulty: "easy", image: "images/firefox.jpeg" },
-        { title: "gucci", hint_qustion: "I am a luxury fashion brand", difficulty: "easy", image: "images/gucci.jpeg" },
-        { title: "hacker rank", hint_qustion: "I am a platform for coding practice and interviews", difficulty: "easy", image: "images/hackerrank.jpeg" },
-        { title: "honda", hint_qustion: "I am a Japanese car manufacturer", difficulty: "easy", image: "images/honda.jpeg" },
-        { title: "hyundai", hint_qustion: "I am a South Korean car brand", difficulty: "easy", image: "images/hyundai.jpeg" },
-        { title: "leetcode", hint_qustion: "I am a platform for coding challenges", difficulty: "easy", image: "images/leetcode.jpeg" },
-        { title: "linux", hint_qustion: "I am an open-source operating system", difficulty: "easy", image: "images/linux.jpeg" },
-        { title: "logitech", hint_qustion: "I am a company known for computer peripherals", difficulty: "medium", image: "images/logitech.jpeg" },
-        { title: "louis vuitton", hint_qustion: "I am a luxury fashion brand", difficulty: "easy", image: "images/louis_vuitton.jpeg" },
-        { title: "mahindra", hint_qustion: "I am an Indian vehicle manufacturer", difficulty: "easy", image: "images/mahindra.jpeg" },
-        { title: "myntra", hint_qustion: "I am an Indian online fashion retailer", difficulty: "easy", image: "images/myntra.jpeg" },
-        { title: "physics wallah", hint_qustion: "I am an Indian edtech platform", difficulty: "easy", image: "images/physicswallah.jpeg" },
-        { title: "playstation", hint_qustion: "I am a gaming console brand", difficulty: "easy", image: "images/playstation.jpeg" },
-        { title: "renault", hint_qustion: "I am a French car brand", difficulty: "easy", image: "images/renault.jpeg" },
-        { title: "skoda", hint_qustion: "I am a Czech car manufacturer", difficulty: "easy", image: "images/skoda.jpeg" },
-        { title: "spotify", hint_qustion: "I give you access to millions of songs", difficulty: "easy", image: "images/spotify.jpeg" },
-        { title: "sbi", hint_qustion: "I am a major Indian public sector bank", difficulty: "easy", image: "images/sbi.jpeg" },
-        { title: "tataneu", hint_qustion: "I am an Indian energy company", difficulty: "easy", image: "images/tataneu.jpeg" },
-        { title: "suzuki", hint_qustion: "I am a Japanese vehicle manufacturer", difficulty: "easy", image: "images/suzuki.jpeg" },
-        { title: "tesla", hint_qustion: "I am an electric car company", difficulty: "easy", image: "images/tesla.jpeg" },
-        { title: "toyota", hint_qustion: "I am a Japanese car brand", difficulty: "easy", image: "images/toyota.jpeg" },
-        { title: "union bank", hint_qustion: "I am an Indian public sector bank", difficulty: "easy", image: "images/unionbank.jpeg" },
-        { title: "vedantu", hint_qustion: "I am an Indian online learning platform", difficulty: "easy", image: "images/vedantu.jpeg" },
-        { title: "volkswagen", hint_qustion: "I am a German car brand", difficulty: "easy", image: "images/volkswagen.jpeg" },
-        { title: "yesbank", hint_qustion: "I am an Indian private bank", difficulty: "easy", image: "images/yes_bank.jpeg" },
-        { title: "xbox", hint_qustion: "I am a video game console", difficulty: "easy", image: "images/xbox.jpeg" },
-        { title: "zepto", hint_qustion: "I am an Indian quick commerce company", difficulty: "easy", image: "images/zepto.jpeg" },
-        { title: "zerodha", hint_qustion: "I help you trade without breaking your wallet", difficulty: "medium", image: "images/zerodha.jpeg" },
-        { title: "western digital", hint_qustion: "I store your memories in shades of red, blue, and green", difficulty: "medium", image: "images/westerndigital.jpeg" },
-        { title: "udaan", hint_qustion: "I connect India's merchants on wings of commerce", difficulty: "hard", image: "images/udaan.jpeg" },
-        { title: "titan company", hint_qustion: "I keep time and adorn wrists with elegance", difficulty: "hard", image: "images/titan-company@logotyp.us.png" },
-        { title: "razorpay", hint_qustion: "I slice through payments with digital ease", difficulty: "medium", image: "images/razorpay.jpeg" },
-        { title: "payu", hint_qustion: "I unite payments across borders with a simple U", difficulty: "medium", image: "images/payU.jpeg" },
-        { title: "oracle", hint_qustion: "I predict your data’s future with ancient wisdom", difficulty: "medium", image: "images/oracle.jpeg" },
-        { title: "openai", hint_qustion: "I unlock intelligence with a key to the future", difficulty: "medium", image: "images/openai.jpeg" },
-        { title: "michelin", hint_qustion: "I roll you forward with a man made of tires", difficulty: "hard", image: "images/michelin.jpeg" },
-        { title: "mastercard", hint_qustion: "I master transactions with interlocking circles", difficulty: "medium", image: "images/mastercard.jpeg" },
-        { title: "linkedin", hint_qustion: "I link professionals in a web of opportunity", difficulty: "medium", image: "images/linkedin.jpeg" },
-        { title: "dunzo", hint_qustion: "I dash to deliver your daily needs", difficulty: "medium", image: "images/dunzo.jpeg" },
-        { title: "cred", hint_qustion: "I reward you for paying what you owe", difficulty: "medium", image: "images/cred.jpeg" },
-        { title: "cognizant", hint_qustion: "I make businesses aware of their digital potential", difficulty: "medium", image: "images/cognizant.jpeg" },
-        { title: "claude", hint_qustion: "I converse with you, born from human-like thought", difficulty: "hard", image: "images/claude.jpeg" },
-        { title: "accenture", hint_qustion: "I accent your business with innovative solutions", difficulty: "medium", image: "images/accenture.jpeg" },
-        { title: "polygon", hint_qustion: "I shape the digital realm with many sides", difficulty: "hard", image: "images/polygon.jpeg" },
-        { title: "maersk", hint_qustion: "I sail the seas carrying the world’s goods", difficulty: "hard", image: "images/maersk.jpeg" },
-        { title: "ericsson", hint_qustion: "I connect voices across invisible waves", difficulty: "hard", image: "images/ericsson.jpeg" },
-        { title: "darpa", hint_qustion: "I dream up tomorrow’s defenses in the shadows", difficulty: "hard", image: "images/darpa.jpeg" }, // Assuming "DAPRA" was meant to be "DARPA"
-        { title: "broadcom", hint_qustion: "I bridge the unseen highways of technology", difficulty: "hard", image: "images/broadcom.jpeg" }
-    ];
-
-    let currentQuestions = [];
-    let currentIndex = 0;
-    let score = 0;
-    let timeLeft = 15;
-    let timerId;
-    let usedLogos = [];
-
-
-
-    const logoElement = document.getElementById('logo');
-    const hintElement = document.getElementById('hint');
-    const userInput = document.getElementById('user-input');
-    const submitBtn = document.getElementById('submit-btn');
-    const feedbackElement = document.getElementById('feedback');
-    const scoreElement = document.getElementById('score');
-    const timerElement = document.getElementById('timer');
-    const timerProgress = document.getElementById('timer-progress');
-    const restartBtn = document.getElementById('restart-btn');
-
-    function startGame() {
-        const easy = shuffleArray(questionDataBase.filter(q => q.difficulty === "easy" && !usedLogos.includes(q.title))).slice(0, 4);
-        const medium = shuffleArray(questionDataBase.filter(q => q.difficulty === "medium" && !usedLogos.includes(q.title))).slice(0, 3);
-        const hard = shuffleArray(questionDataBase.filter(q => q.difficulty === "hard" && !usedLogos.includes(q.title))).slice(0, 3);
-        currentQuestions = shuffleArray([...easy, ...medium, ...hard]);
-        currentIndex = 0;
-        score = 0;
-        timeLeft = 15;
-        updateDisplay();
-        startTimer();
-        submitBtn.style.display = 'inline';
-        restartBtn.style.display = 'none';
-        feedbackElement.textContent = '';
-        feedbackElement.classList.remove('show');
-        userInput.disabled = false;
-        userInput.value = '';
-    }
-
-    function shuffleArray(array) {
-        return array.sort(() => Math.random() - 0.5);
-    }
-
-    function updateDisplay() {
-        if (currentIndex < currentQuestions.length) {
-            logoElement.src = currentQuestions[currentIndex].image;
-            hintElement.textContent = currentQuestions[currentIndex].hint_qustion;
-            scoreElement.textContent = `Score: ${score}/${currentQuestions.length} | Question: ${currentIndex + 1}/${currentQuestions.length}`;
-            timerElement.textContent = `Time Left: ${timeLeft}s`;
-        } else {
-            endGame();
-        }
-    }
-
-    function startTimer() {
-        clearInterval(timerId);
-        timeLeft = 15;
-        timerProgress.style.width = '100%';
-        timerProgress.style.transition = `width ${timeLeft}s linear`;
-        timerProgress.style.width = '0%';
-        timerId = setInterval(() => {
-            timeLeft--;
-            timerElement.textContent = `Time Left: ${timeLeft}s`;
-            if (timeLeft <= 0) {
-                clearInterval(timerId);
-                feedbackElement.textContent = `Time's up! The answer was "${currentQuestions[currentIndex].title}".`;
-                feedbackElement.style.color = "red";
-                feedbackElement.classList.add('show');
-                currentIndex++;
-                setTimeout(() => {
-                    feedbackElement.classList.remove('show');
-                    updateDisplay();
-                    if (currentIndex < currentQuestions.length) startTimer();
-                }, 1500);
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Guess the Brand Game</title>
+        <style>
+            body {
+                font-family: 'Poppins', sans-serif;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                min-height: 100vh;
+                background: linear-gradient(135deg, #1e3c72, #2a5298);
+                margin: 0;
+                overflow: hidden;
             }
-        }, 1000);
-    }
+            .game-container {
+                background: rgba(255, 255, 255, 0.95);
+                padding: 30px;
+                border-radius: 20px;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+                text-align: center;
+                width: 500px;
+                position: relative;
+                overflow: hidden;
+                animation: fadeIn 1s ease-in-out;
+            }
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(-20px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+            h1 {
+                font-size: 32px;
+                color: #2a5298;
+                margin-bottom: 20px;
+                text-transform: uppercase;
+                letter-spacing: 2px;
+            }
+            #logo {
+                width: 120px;
+                height: 120px;
+                margin-bottom: 20px;
+                object-fit: contain;
+                border-radius: 10px;
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+                transition: transform 0.3s;
+            }
+            #logo:hover {
+                transform: scale(1.1);
+            }
+            #hint {
+                font-size: 20px;
+                color: #333;
+                margin-bottom: 25px;
+                font-style: italic;
+                background: #f0f4ff;
+                padding: 10px;
+                border-radius: 8px;
+            }
+            #user-input {
+                padding: 12px;
+                font-size: 18px;
+                width: 85%;
+                margin-bottom: 15px;
+                border: 2px solid #2a5298;
+                border-radius: 25px;
+                outline: none;
+                transition: border-color 0.3s, box-shadow 0.3s;
+            }
+            #user-input:focus {
+                border-color: #1e3c72;
+                box-shadow: 0 0 10px rgba(30, 60, 114, 0.5);
+            }
+            #submit-btn {
+                padding: 12px 30px;
+                font-size: 18px;
+                background: linear-gradient(45deg, #ff6b6b, #ff8e53);
+                color: white;
+                border: none;
+                border-radius: 25px;
+                cursor: pointer;
+                transition: transform 0.3s, box-shadow 0.3s;
+                box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+            }
+            #submit-btn:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 8px 20px rgba(255, 107, 107, 0.6);
+            }
+            #feedback {
+                margin-top: 20px;
+                font-size: 18px;
+                font-weight: bold;
+                opacity: 0;
+                transition: opacity 0.5s, transform 0.5s;
+            }
+            #feedback.show {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            #feedback.correct {
+                color: #28a745;
+                transform: translateY(-10px);
+            }
+            #feedback.wrong {
+                color: #dc3545;
+                transform: translateY(-10px);
+            }
+            #score {
+                margin-top: 15px;
+                font-size: 18px;
+                color: #2a5298;
+                font-weight: 600;
+            }
+            #timer {
+                margin-top: 15px;
+                font-size: 16px;
+                color: #fff;
+                background: rgba(0, 0, 0, 0.7);
+                padding: 5px 10px;
+                border-radius: 15px;
+            }
+            #timer-bar {
+                width: 100%;
+                height: 12px;
+                background: #ddd;
+                border-radius: 6px;
+                overflow: hidden;
+                margin-top: 10px;
+                box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
+            }
+            #timer-progress {
+                height: 100%;
+                background: linear-gradient(45deg, #28a745, #85e085);
+                width: 100%;
+                transition: width linear;
+                border-radius: 6px;
+            }
+            #restart-btn {
+                display: none;
+                margin-top: 25px;
+                padding: 12px 30px;
+                background: linear-gradient(45deg, #00c6ff, #0072ff);
+                color: white;
+                border: none;
+                border-radius: 25px;
+                cursor: pointer;
+                font-size: 18px;
+                transition: transform 0.3s, box-shadow 0.3s;
+                box-shadow: 0 5px 15px rgba(0, 198, 255, 0.4);
+            }
+            #restart-btn:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 8px 20px rgba(0, 198, 255, 0.6);
+            }
+            /* Background Animation */
+            body::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: radial-gradient(circle, rgba(255, 255, 255, 0.1), transparent);
+                animation: pulse 10s infinite;
+                z-index: -1;
+            }
+            @keyframes pulse {
+                0% { transform: scale(1); }
+                50% { transform: scale(1.2); }
+                100% { transform: scale(1); }
+            }
+        </style>
+    </head>
+    <body>
+    <div class="game-container">
+        <h1>Guess the Brand</h1>
+        <img src="" alt="" srcset="" id="logo">
+        <div id="hint"></div>
+        <input type="text" id="user-input" placeholder="Type your answer here">
+        <button id="submit-btn">Submit</button>
+        <div id="feedback"></div>
+        <div id="score">Score: 0/10 | Question: 1/10</div>
+        <div id="timer">Time Left: 15s</div>
+        <div id="timer-bar"><div id="timer-progress"></div></div>
+        <button id="restart-btn">Restart Game</button>
+    </div>
 
-    function checkAnswer() {
-        // Remove spaces and convert to lowercase for comparison
-        const userAnswer = userInput.value.trim().replace(/\s+/g, '').toLowerCase();
-        const correctAnswer = currentQuestions[currentIndex].title.replace(/\s+/g, '').toLowerCase();
+    <script>
+        const questionDataBase = [
+            { title: "boat", hint_qustion: "I am an Indian consumer electronics brand", difficulty: "easy", image: "images/boat.jpeg" },
+            { title: "bandhan bank", hint_qustion: "I am an Indian bank", difficulty: "easy", image: "images/bandhanbank.jpeg" },
+            { title: "adobe", hint_qustion: "I create software for design and creativity", difficulty: "easy", image: "images/adobe.jpeg" },
+            { title: "counter strike", hint_qustion: "I am a popular video game", difficulty: "easy", image: "images/counterstrike.jpeg" },
+            { title: "canon", hint_qustion: "I am a Japanese company known for cameras and printers", difficulty: "easy", image: "images/canon.jpeg" },
+            { title: "chevrolet", hint_qustion: "I am an American car brand", difficulty: "easy", image: "images/chevrolet.jpeg" },
+            { title: "bank of india", hint_qustion: "I am an Indian public sector bank", difficulty: "easy", image: "images/bankofindia.jpeg" },
+            { title: "central bank of india", hint_qustion: "I am another major Indian public sector bank", difficulty: "easy", image: "images/centralbankofindia.jpeg" },
+            { title: "axis bank", hint_qustion: "I am an Indian private bank", difficulty: "easy", image: "images/axis_bank.jpeg" },
+            { title: "chanel", hint_qustion: "I am a luxury fashion brand with brand ambassador as bts V", difficulty: "easy", image: "images/chanel.jpeg" },
+            { title: "deloitte", hint_qustion: "I am a global professional services firm", difficulty: "easy", image: "images/deloitte.jpeg" },
+            { title: "denabank", hint_qustion: "I am an Indian bank that rhymes with lena", difficulty: "easy", image: "images/denabank.jpeg" },
+            { title: "dropbox", hint_qustion: "I am a cloud storage service", difficulty: "easy", image: "images/dropbox.jpeg" },
+            { title: "firefox", hint_qustion: "I am a free and open-source web browser", difficulty: "easy", image: "images/firefox.jpeg" },
+            { title: "gucci", hint_qustion: "I am a luxury fashion brand", difficulty: "easy", image: "images/gucci.jpeg" },
+            { title: "hacker rank", hint_qustion: "I am a platform for coding practice and interviews", difficulty: "easy", image: "images/hackerrank.jpeg" },
+            { title: "honda", hint_qustion: "I am a Japanese car manufacturer", difficulty: "easy", image: "images/honda.jpeg" },
+            { title: "hyundai", hint_qustion: "I am a South Korean car brand", difficulty: "easy", image: "images/hyundai.jpeg" },
+            { title: "leetcode", hint_qustion: "I am a platform for coding challenges", difficulty: "easy", image: "images/leetcode.jpeg" },
+            { title: "linux", hint_qustion: "I am an open-source operating system", difficulty: "easy", image: "images/linux.jpeg" },
+            { title: "logitech", hint_qustion: "I am a company known for computer peripherals", difficulty: "medium", image: "images/logitech.jpeg" },
+            { title: "louis vuitton", hint_qustion: "I am a luxury fashion brand", difficulty: "easy", image: "images/louis_vuitton.jpeg" },
+            { title: "mahindra", hint_qustion: "I am an Indian vehicle manufacturer", difficulty: "easy", image: "images/mahindra.jpeg" },
+            { title: "myntra", hint_qustion: "I am an Indian online fashion retailer", difficulty: "easy", image: "images/myntra.jpeg" },
+            { title: "physics wallah", hint_qustion: "I am an Indian edtech platform", difficulty: "easy", image: "images/physicswallah.jpeg" },
+            { title: "playstation", hint_qustion: "I am a gaming console brand", difficulty: "easy", image: "images/playstation.jpeg" },
+            { title: "renault", hint_qustion: "I am a French car brand", difficulty: "easy", image: "images/renault.jpeg" },
+            { title: "skoda", hint_qustion: "I am a Czech car manufacturer", difficulty: "easy", image: "images/skoda.jpeg" },
+            { title: "spotify", hint_qustion: "I give you access to millions of songs", difficulty: "easy", image: "images/spotify.jpeg" },
+            { title: "sbi", hint_qustion: "I am a major Indian public sector bank", difficulty: "easy", image: "images/sbi.jpeg" },
+            { title: "tataneu", hint_qustion: "I am an Indian energy company", difficulty: "easy", image: "images/tataneu.jpeg" },
+            { title: "suzuki", hint_qustion: "I am a Japanese vehicle manufacturer", difficulty: "easy", image: "images/suzuki.jpeg" },
+            { title: "tesla", hint_qustion: "I am an electric car company", difficulty: "easy", image: "images/tesla.jpeg" },
+            { title: "toyota", hint_qustion: "I am a Japanese car brand", difficulty: "easy", image: "images/toyota.jpeg" },
+            { title: "union bank", hint_qustion: "I am an Indian public sector bank", difficulty: "easy", image: "images/unionbank.jpeg" },
+            { title: "vedantu", hint_qustion: "I am an Indian online learning platform", difficulty: "easy", image: "images/vedantu.jpeg" },
+            { title: "volkswagen", hint_qustion: "I am a German car brand", difficulty: "easy", image: "images/volkswagen.jpeg" },
+            { title: "yesbank", hint_qustion: "I am an Indian private bank", difficulty: "easy", image: "images/yes_bank.jpeg" },
+            { title: "xbox", hint_qustion: "I am a video game console", difficulty: "easy", image: "images/xbox.jpeg" },
+            { title: "zepto", hint_qustion: "I am an Indian quick commerce company", difficulty: "easy", image: "images/zepto.jpeg" },
+            { title: "zerodha", hint_qustion: "I help you trade without breaking your wallet", difficulty: "medium", image: "images/zerodha.jpeg" },
+            { title: "western digital", hint_qustion: "I store your memories in shades of red, blue, and green", difficulty: "medium", image: "images/westerndigital.jpeg" },
+            { title: "udaan", hint_qustion: "I connect India's merchants on wings of commerce", difficulty: "hard", image: "images/udaan.jpeg" },
+            { title: "titan company", hint_qustion: "I keep time and adorn wrists with elegance", difficulty: "hard", image: "images/titan-company@logotyp.us.png" },
+            { title: "razorpay", hint_qustion: "I slice through payments with digital ease", difficulty: "medium", image: "images/razorpay.jpeg" },
+            { title: "payu", hint_qustion: "I unite payments across borders with a simple U", difficulty: "medium", image: "images/payU.jpeg" },
+            { title: "oracle", hint_qustion: "I predict your data’s future with ancient wisdom", difficulty: "medium", image: "images/oracle.jpeg" },
+            { title: "openai", hint_qustion: "I unlock intelligence with a key to the future", difficulty: "medium", image: "images/openai.jpeg" },
+            { title: "michelin", hint_qustion: "I roll you forward with a man made of tires", difficulty: "hard", image: "images/michelin.jpeg" },
+            { title: "mastercard", hint_qustion: "I master transactions with interlocking circles", difficulty: "medium", image: "images/mastercard.jpeg" },
+            { title: "linkedin", hint_qustion: "I link professionals in a web of opportunity", difficulty: "medium", image: "images/linkedin.jpeg" },
+            { title: "dunzo", hint_qustion: "I dash to deliver your daily needs", difficulty: "medium", image: "images/dunzo.jpeg" },
+            { title: "cred", hint_qustion: "I reward you for paying what you owe", difficulty: "medium", image: "images/cred.jpeg" },
+            { title: "cognizant", hint_qustion: "I make businesses aware of their digital potential", difficulty: "medium", image: "images/cognizant.jpeg" },
+            { title: "claude", hint_qustion: "I converse with you, born from human-like thought", difficulty: "hard", image: "images/claude.jpeg" },
+            { title: "accenture", hint_qustion: "I accent your business with innovative solutions", difficulty: "medium", image: "images/accenture.jpeg" },
+            { title: "polygon", hint_qustion: "I shape the digital realm with many sides", difficulty: "hard", image: "images/polygon.jpeg" },
+            { title: "maersk", hint_qustion: "I sail the seas carrying the world’s goods", difficulty: "hard", image: "images/maersk.jpeg" },
+            { title: "ericsson", hint_qustion: "I connect voices across invisible waves", difficulty: "hard", image: "images/ericsson.jpeg" },
+            { title: "darpa", hint_qustion: "I dream up tomorrow’s defenses in the shadows", difficulty: "hard", image: "images/dapra.jpeg" }, // Assuming "DAPRA" was meant to be "DARPA"
+            { title: "broadcom", hint_qustion: "I bridge the unseen highways of technology", difficulty: "hard", image: "images/broadcom.jpeg" }
+        ];
 
-        clearInterval(timerId);
-        if (userAnswer === correctAnswer) {
-            score++;
-            feedbackElement.textContent = "Correct!";
-            feedbackElement.style.color = "green";
-        } else {
-            feedbackElement.textContent = `Wrong! The answer was "${currentQuestions[currentIndex].title}".`;
-            feedbackElement.style.color = "red";
-        }
-        feedbackElement.classList.add('show');
+        let currentQuestions = [];
+        let currentIndex = 0;
+        let score = 0;
+        let timeLeft = 15;
+        let timerId;
+        let usedLogos = [];
 
-        currentIndex++;
-        userInput.value = '';
-        setTimeout(() => {
-            feedbackElement.classList.remove('show');
+
+
+        const logoElement = document.getElementById('logo');
+        const hintElement = document.getElementById('hint');
+        const userInput = document.getElementById('user-input');
+        const submitBtn = document.getElementById('submit-btn');
+        const feedbackElement = document.getElementById('feedback');
+        const scoreElement = document.getElementById('score');
+        const timerElement = document.getElementById('timer');
+        const timerProgress = document.getElementById('timer-progress');
+        const restartBtn = document.getElementById('restart-btn');
+
+        function startGame() {
+            const easy = shuffleArray(questionDataBase.filter(q => q.difficulty === "easy" && !usedLogos.includes(q.title))).slice(0, 4);
+            const medium = shuffleArray(questionDataBase.filter(q => q.difficulty === "medium" && !usedLogos.includes(q.title))).slice(0, 3);
+            const hard = shuffleArray(questionDataBase.filter(q => q.difficulty === "hard" && !usedLogos.includes(q.title))).slice(0, 3);
+            currentQuestions = shuffleArray([...easy, ...medium, ...hard]);
+            currentIndex = 0;
+            score = 0;
+            timeLeft = 15;
             updateDisplay();
-            if (currentIndex < currentQuestions.length) startTimer();
-        }, 1500);
-    }
-
-    function endGame() {
-        clearInterval(timerId);
-        logoElement.src = 'images/#include.jpg';
-        hintElement.textContent = "Game Over!";
-        userInput.disabled = true;
-        submitBtn.style.display = 'none';
-        restartBtn.style.display = 'inline';
-        scoreElement.textContent = `Final Score: ${score}/${currentQuestions.length}`;
-        timerElement.textContent = '';
-        timerProgress.style.width = '100%';
-        feedbackElement.textContent = `You got ${score} out of ${currentQuestions.length} correct!`;
-        feedbackElement.style.color = "black";
-        feedbackElement.classList.add('show');
-
-        // Add used logos to the global array
-        currentQuestions.forEach(q => usedLogos.push(q.title));
-    }
-
-    submitBtn.addEventListener('click', () => {
-        if (userInput.value.trim() !== '') {
-            checkAnswer();
+            startTimer();
+            submitBtn.style.display = 'inline';
+            restartBtn.style.display = 'none';
+            feedbackElement.textContent = '';
+            feedbackElement.classList.remove('show');
+            userInput.disabled = false;
+            userInput.value = '';
         }
-    });
 
-    userInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter' && userInput.value.trim() !== '') {
-            checkAnswer();
+        function shuffleArray(array) {
+            return array.sort(() => Math.random() - 0.5);
         }
-    });
 
-    restartBtn.addEventListener('click', startGame);
+        function updateDisplay() {
+            if (currentIndex < currentQuestions.length) {
+                logoElement.src = currentQuestions[currentIndex].image;
+                hintElement.textContent = currentQuestions[currentIndex].hint_qustion;
+                scoreElement.textContent = `Score: ${score}/${currentQuestions.length} | Question: ${currentIndex + 1}/${currentQuestions.length}`;
+                timerElement.textContent = `Time Left: ${timeLeft}s`;
+            } else {
+                endGame();
+            }
+        }
 
-    // Start the game initially
-    startGame();
-</script>
-</body>
-</html>
+        function startTimer() {
+            clearInterval(timerId);
+            timeLeft = 15;
+            timerProgress.style.width = '100%';
+            timerProgress.style.transition = `width ${timeLeft}s linear`;
+            timerProgress.style.width = '0%';
+            timerId = setInterval(() => {
+                timeLeft--;
+                timerElement.textContent = `Time Left: ${timeLeft}s`;
+                if (timeLeft <= 0) {
+                    clearInterval(timerId);
+                    feedbackElement.textContent = `Time's up! The answer was "${currentQuestions[currentIndex].title}".`;
+                    feedbackElement.style.color = "red";
+                    feedbackElement.classList.add('show');
+                    currentIndex++;
+                    setTimeout(() => {
+                        feedbackElement.classList.remove('show');
+                        updateDisplay();
+                        if (currentIndex < currentQuestions.length) startTimer();
+                    }, 1500);
+                }
+            }, 1000);
+        }
+
+        function checkAnswer() {
+            // Remove spaces and convert to lowercase for comparison
+            const userAnswer = userInput.value.trim().replace(/\s+/g, '').toLowerCase();
+            const correctAnswer = currentQuestions[currentIndex].title.replace(/\s+/g, '').toLowerCase();
+
+            clearInterval(timerId);
+            if (userAnswer === correctAnswer) {
+                score++;
+                feedbackElement.textContent = "Correct!";
+                feedbackElement.style.color = "green";
+            } else {
+                feedbackElement.textContent = `Wrong! The answer was "${currentQuestions[currentIndex].title}".`;
+                feedbackElement.style.color = "red";
+            }
+            feedbackElement.classList.add('show');
+
+            currentIndex++;
+            userInput.value = '';
+            setTimeout(() => {
+                feedbackElement.classList.remove('show');
+                updateDisplay();
+                if (currentIndex < currentQuestions.length) startTimer();
+            }, 1500);
+        }
+
+        function endGame() {
+            clearInterval(timerId);
+            logoElement.src = 'images/#include.jpg';
+            hintElement.textContent = "Game Over!";
+            userInput.disabled = true;
+            submitBtn.style.display = 'none';
+            restartBtn.style.display = 'inline';
+            scoreElement.textContent = `Final Score: ${score}/${currentQuestions.length}`;
+            timerElement.textContent = '';
+            timerProgress.style.width = '100%';
+            feedbackElement.textContent = `You got ${score} out of ${currentQuestions.length} correct!`;
+            feedbackElement.style.color = "black";
+            feedbackElement.classList.add('show');
+
+            // Add used logos to the global array
+            currentQuestions.forEach(q => usedLogos.push(q.title));
+        }
+
+        submitBtn.addEventListener('click', () => {
+            if (userInput.value.trim() !== '') {
+                checkAnswer();
+            }
+        });
+
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && userInput.value.trim() !== '') {
+                checkAnswer();
+            }
+        });
+
+        restartBtn.addEventListener('click', startGame);
+
+        // Start the game initially
+        startGame();
+    </script>
+    </body>
+    </html>
